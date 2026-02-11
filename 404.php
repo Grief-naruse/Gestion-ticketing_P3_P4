@@ -16,3 +16,5 @@
     </div>
 </body>
 </html>
+
+// 404.php
