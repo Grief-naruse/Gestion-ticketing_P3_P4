@@ -1,0 +1,93 @@
+<?php
+$message = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $client = htmlspecialchars($_POST['client']);
+    $name = htmlspecialchars($_POST['name']);
+    $hours = htmlspecialchars($_POST['hours']);
+
+    if (!empty($client) && !empty($name) && !empty($hours)) {
+        $message = '<div class="alert alert-success">✅ Projet "'. $name .'" créé avec succès ! <a href="projects.php">Voir la liste</a></div>';
+    } else {
+        $message = '<div class="alert alert-error">❌ Veuillez remplir les champs obligatoires.</div>';
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau Projet</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <h2>Ticketing App</h2>
+        <nav>
+            <ul>
+                <li><a href="dashboard.php">Tableau de bord</a></li>
+                <li><a href="projects.php" class="active">Projets</a></li>
+                <li><a href="tickets.php">Tickets</a></li>
+                <li><a href="settings.php">Paramètres</a></li>
+            </ul>
+        </nav>
+        <div class="user-info">
+             <p style="margin-bottom: 5px; font-size: 0.8rem; opacity: 0.7;">Connecté en tant que :</p>
+             <a href="profile.php" style="color: white; font-weight: bold; text-decoration: none;">Ilan Rubaud</a>
+             <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                <a href="index.php" style="color: #bdc3c7; font-size: 0.8rem; text-decoration: none;">➜ Déconnexion</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="content">
+        <header>
+            <h1>Nouveau Projet</h1>
+        </header>
+
+        <?php if($message) echo $message; ?>
+
+        <form action="" method="POST" id="projectForm" class="card">
+            <div class="form-group">
+                <label for="client">Client *</label>
+                <select id="client" name="client" required>
+                    <option value="">-- Sélectionner un client --</option>
+                    <option value="1">Boutique Mode SA</option>
+                    <option value="2">Assurance Plus</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="p-name">Nom du projet *</label>
+                <input type="text" id="p-name" name="name" placeholder="Ex: Refonte Intranet" required>
+            </div>
+
+            <div class="form-group">
+                <label for="p-desc">Description</label>
+                <textarea id="p-desc" name="description" rows="3"></textarea>
+            </div>
+
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+            <h3>Configuration du Contrat</h3>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="hours">Enveloppe d'heures *</label>
+                    <input type="number" id="hours" name="hours" placeholder="Ex: 50" required>
+                </div>
+                <div class="form-group">
+                    <label for="rate">Taux horaire (€/h)</label>
+                    <input type="number" id="rate" name="rate" placeholder="Ex: 80">
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button type="submit">Créer le projet</button>
+                <a href="projects.php" style="margin-left: 20px; color: #666; text-decoration: none;">Annuler</a>
+            </div>
+        </form>
+    </main>
+    <script src="js/app.js"></script>
+</body>
+</html>
