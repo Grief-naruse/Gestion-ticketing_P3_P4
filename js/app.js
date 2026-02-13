@@ -151,8 +151,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    validateAndSubmit(ticketForm, 'tickets.php');
-    validateAndSubmit(projectForm, 'projects.php');
+    //validateAndSubmit(ticketForm, 'tickets.php');
+    //validateAndSubmit(projectForm, 'projects.php');
 
     // ============================================================
     // 4. PAGES LISTES (Tickets & Projets) : Filtres de recherche

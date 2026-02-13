@@ -168,8 +168,11 @@ tr:hover {
     
     border-radius: 20px;
     font-size: 0.8rem;
-    color: #fff;
+    color: #fff;        /* Texte Blanc */
     text-align: center;
+    
+    /* 👇 C'EST LA LIGNE QU'IL TE MANQUAIT ! */
+    background-color: #7f8c8d; /* Gris par défaut (ou met #3498db pour du bleu) */
     
     /* Empêche le texte de se casser sur mobile */
     white-space: nowrap; 

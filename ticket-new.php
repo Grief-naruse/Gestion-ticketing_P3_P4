@@ -1,18 +1,46 @@
 <?php
-// TRAITEMENT DU FORMULAIRE PHP
+require 'includes/db.php';
+
+// 1. Récupérer la liste des projets pour le menu déroulant
+try {
+    $stmt = $pdo->query("SELECT id, name FROM projects ORDER BY name ASC");
+    $projectsList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    $projectsList = [];
+}
+
 $message = "";
 
-// Si la méthode est POST, c'est qu'on a cliqué sur "Créer"
+// 2. Traitement du formulaire
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $project_id = (int) $_POST['project_id'];
     $title = htmlspecialchars($_POST['title']);
     $description = htmlspecialchars($_POST['description']);
-    $project = $_POST['project'];
+    $priority = $_POST['priority'];
+    $type = $_POST['type'];
 
-    if (!empty($title) && !empty($description) && !empty($project)) {
-        // Simulation de succès
-        $message = '<div class="alert alert-success">✅ Ticket créé avec succès (Simulation) ! <a href="tickets.php">Retour à la liste</a></div>';
+    if (!empty($title) && !empty($project_id)) {
+        try {
+            $sql = "INSERT INTO tickets (project_id, title, description, priority, type, status, created_at) 
+                    VALUES (:pid, :title, :desc, :prio, :type, 'new', NOW())";
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':pid' => $project_id,
+                ':title' => $title,
+                ':desc' => $description,
+                ':prio' => $priority,
+                ':type' => $type
+            ]);
+
+            header("Location: tickets.php");
+            exit();
+
+        } catch (PDOException $e) {
+            $message = '<div class="alert alert-error">❌ Erreur : ' . $e->getMessage() . '</div>';
+        }
     } else {
-        $message = '<div class="alert alert-error">❌ Veuillez remplir tous les champs.</div>';
+        $message = '<div class="alert alert-error">❌ Champs obligatoires manquants.</div>';
     }
 }
 ?>
@@ -35,70 +63,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <li><a href="settings.php">Paramètres</a></li>
             </ul>
         </nav>
-        <div class="user-info">
-             <p style="margin-bottom: 5px; font-size: 0.8rem; opacity: 0.7;">Connecté en tant que :</p>
-             <a href="profile.php" style="color: white; font-weight: bold; text-decoration: none;">Ilan Rubaud</a>
-             <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-                <a href="index.php" style="color: #bdc3c7; font-size: 0.8rem; text-decoration: none;">➜ Déconnexion</a>
-            </div>
-        </div>
     </aside>
 
     <main class="content">
         <header>
-            <h1>Créer un nouveau ticket</h1>
+            <h1>Nouveau Ticket</h1>
         </header>
 
         <?php if($message) echo $message; ?>
 
-        <section class="card">
-            <form action="" method="POST" id="ticketForm">
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label for="project">Projet concerné *</label>
-                        <select id="project" name="project" required>
-                            <option value="">-- Choisir un projet --</option>
-                            <option value="1">Site E-commerce</option>
-                            <option value="2">CRM Intranet</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="priority">Priorité</label>
-                        <select id="priority" name="priority">
-                            <option value="low">Basse</option>
-                            <option value="medium" selected>Moyenne</option>
-                            <option value="high">Haute</option>
-                        </select>
-                    </div>
-                </div>
+        <form action="" method="POST" id="ticketForm" class="card">
+            <div class="form-group">
+                <label for="project">Projet concerné *</label>
+                <select id="project" name="project_id" required>
+                    <option value="">-- Choisir un projet --</option>
+                    <?php foreach($projectsList as $p): ?>
+                        <option value="<?php echo $p['id']; ?>">
+                            <?php echo htmlspecialchars($p['name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                <div class="form-group">
-                    <label for="title">Titre de la demande *</label>
-                    <input type="text" id="title" name="title" placeholder="Ex: Erreur sur la page contact" required>
-                </div>
+            <div class="form-group">
+                <label for="title">Titre du ticket *</label>
+                <input type="text" id="title" name="title" required>
+            </div>
 
-                <div class="form-group">
-                    <label for="description">Description détaillée *</label>
-                    <textarea id="description" name="description" rows="6" required></textarea>
-                </div>
+            <div class="form-group">
+                <label for="desc">Description détaillée</label>
+                <textarea id="desc" name="description" rows="4"></textarea>
+            </div>
 
+            <div class="grid-2">
                 <div class="form-group">
-                    <label for="type">Type de ticket</label>
-                    <select id="type" name="type">
-                        <option value="included">Inclus dans le contrat</option>
-                        <option value="billable">Facturable en supplément</option>
+                    <label for="priority">Priorité</label>
+                    <select id="priority" name="priority">
+                        <option value="low">Basse</option>
+                        <option value="medium" selected>Moyenne</option>
+                        <option value="high">Haute</option>
                     </select>
-                    <small id="billable-warning" class="hidden" style="color: var(--warning-color); font-weight: bold; display: block; margin-top: 5px;">
-                        ⚠️ Attention : Ce ticket nécessitera une validation du client avant facturation.
-                    </small>
                 </div>
+                <div class="form-group">
+                    <label for="type">Type d'intervention</label>
+                    <select id="type" name="type">
+                        <option value="included">Inclus (Maintenance)</option>
+                        <option value="billable">Facturable</option>
+                    </select>
+                </div>
+            </div>
 
-                <div style="margin-top: 20px;">
-                    <button type="submit">Créer le ticket</button>
-                    <a href="tickets.php" style="margin-left: 20px; color: #666; text-decoration: none;">Annuler</a>
-                </div>
-            </form>
-        </section>
+            <div id="billable-warning" class="alert alert-warning hidden" style="margin-top: 10px;">
+                ⚠️ Ce ticket sera facturé en supplément au client.
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button type="submit">Créer le ticket</button>
+            </div>
+        </form>
     </main>
     <script src="js/app.js"></script>
 </body>

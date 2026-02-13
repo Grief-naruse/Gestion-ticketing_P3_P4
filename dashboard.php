@@ -2,21 +2,21 @@
 require 'includes/data.php';
 
 // --- CALCULS DYNAMIQUES (Stats) ---
-$nbTickets = count($tickets); // Compte total
+$nbTickets = count($tickets);
 $nbProjets = count($projects);
 
-// Compter les tickets "À valider"
+// 1. Compter les tickets "À valider" (Statut officiel Fil Rouge)
 $nbToValidate = 0;
 foreach($tickets as $t) {
-    if ($t['status'] === 'status-new') $nbToValidate++;
+    if ($t['status'] === 'status-to_validate' || $t['status'] === 'status-new') $nbToValidate++;
 }
 
-// Calculer les heures totales consommées (sur tous les projets)
-$totalHoursUsed = 0;
-foreach($projects as $p) {
-    $totalHoursUsed += $p['hours_used'];
-}
+// 2. NOUVEAU : Calculer les heures totales REELLES depuis la table time_entries
+$stmtTime = $pdo->query("SELECT SUM(duration) as total FROM time_entries");
+$rowTime = $stmtTime->fetch(PDO::FETCH_ASSOC);
+$totalHoursReal = $rowTime['total'] ?? 0; // Si vide, on met 0
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -69,7 +69,7 @@ foreach($projects as $p) {
             </div>
             <div class="card">
                 <h3>Heures consommées</h3>
-                <p class="animate-number" style="font-size: 2rem; font-weight: bold;"><?php echo $totalHoursUsed; ?>h</p>
+                <p class="animate-number" style="font-size: 2rem; font-weight: bold;"><?php echo $totalHoursReal; ?>h</p>
             </div>
         </section>
 
@@ -80,26 +80,34 @@ foreach($projects as $p) {
                     <tr>
                         <th>Projet</th>
                         <th>Titre</th>
+                        <th>Type</th>
                         <th>Statut</th>
                         <th>Date</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
-                    // On inverse le tableau pour avoir les plus récents en premier (simulation)
-                    $reversedTickets = array_reverse($tickets);
-                    $lastTickets = array_slice($reversedTickets, 0, 5);
-                    
-                    foreach($lastTickets as $ticket): 
-                    ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($ticket['project']); ?></td>
-                        <td><?php echo htmlspecialchars($ticket['title']); ?></td>
-                        <td><span class="badge <?php echo $ticket['status']; ?>"><?php echo $ticket['status_label']; ?></span></td>
-                        <td><?php echo date('d/m/Y', strtotime($ticket['created_at'])); ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
+    <?php 
+    $reversedTickets = array_reverse($tickets);
+    $lastTickets = array_slice($reversedTickets, 0, 5);
+    
+    foreach($lastTickets as $ticket): 
+    ?>
+    <tr>
+            <td><?php echo htmlspecialchars($ticket['project']); ?></td>
+            <td><?php echo htmlspecialchars($ticket['title']); ?></td>
+            <td>
+                <span class="badge type-<?php echo $ticket['type']; ?>">
+                    <?php echo $ticket['type_label']; ?>
+                </span>
+            <td>
+                <span class="badge status-<?php echo $ticket['status']; ?>">
+                    <?php echo $ticket['status_label']; ?>
+                </span>
+            </td>
+                <td><?php echo date('d/m/Y', strtotime($ticket['created_at'])); ?></td>
+            </tr>
+                <?php endforeach; ?>
+            </tbody>
             </table>
         </section>
     </main>

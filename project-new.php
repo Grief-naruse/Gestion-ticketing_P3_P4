@@ -1,13 +1,39 @@
 <?php
+require 'includes/db.php'; // Connexion BDD
+
 $message = "";
 
+// Si le formulaire est soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $client = htmlspecialchars($_POST['client']);
     $name = htmlspecialchars($_POST['name']);
-    $hours = htmlspecialchars($_POST['hours']);
+    $description = htmlspecialchars($_POST['description']);
+    $type = htmlspecialchars($_POST['type']); // <-- On récupère le type ici
+    $hours = (int) $_POST['hours'];
+    $rate = (float) $_POST['rate'];
 
     if (!empty($client) && !empty($name) && !empty($hours)) {
-        $message = '<div class="alert alert-success">✅ Projet "'. $name .'" créé avec succès ! <a href="projects.php">Voir la liste</a></div>';
+        try {
+            // REQUÊTE SQL QUI INCLUT LE TYPE
+            $sql = "INSERT INTO projects (name, client_name, description, type, hours_total, rate, hours_used) 
+                    VALUES (:name, :client, :descr, :type, :hours, :rate, 0)";
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':name' => $name,
+                ':client' => $client,
+                ':descr' => $description,
+                ':type' => $type, // <-- On l'envoie à la BDD
+                ':hours' => $hours,
+                ':rate' => $rate
+            ]);
+
+            header("Location: projects.php");
+            exit();
+
+        } catch (PDOException $e) {
+            $message = '<div class="alert alert-error">❌ Erreur SQL : ' . $e->getMessage() . '</div>';
+        }
     } else {
         $message = '<div class="alert alert-error">❌ Veuillez remplir les champs obligatoires.</div>';
     }
@@ -32,13 +58,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <li><a href="settings.php">Paramètres</a></li>
             </ul>
         </nav>
-        <div class="user-info">
-             <p style="margin-bottom: 5px; font-size: 0.8rem; opacity: 0.7;">Connecté en tant que :</p>
-             <a href="profile.php" style="color: white; font-weight: bold; text-decoration: none;">Ilan Rubaud</a>
-             <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-                <a href="index.php" style="color: #bdc3c7; font-size: 0.8rem; text-decoration: none;">➜ Déconnexion</a>
-            </div>
-        </div>
     </aside>
 
     <main class="content">
@@ -50,12 +69,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <form action="" method="POST" id="projectForm" class="card">
             <div class="form-group">
-                <label for="client">Client *</label>
-                <select id="client" name="client" required>
-                    <option value="">-- Sélectionner un client --</option>
-                    <option value="1">Boutique Mode SA</option>
-                    <option value="2">Assurance Plus</option>
-                </select>
+                <label for="client">Nom du Client *</label>
+                <input type="text" id="client" name="client" placeholder="Ex: Microsoft" required>
             </div>
 
             <div class="form-group">
@@ -68,8 +83,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <textarea id="p-desc" name="description" rows="3"></textarea>
             </div>
 
+            <div class="form-group">
+                <label for="p-type">Type de contrat *</label>
+                <select id="p-type" name="type" required>
+                    <option value="Forfait">Forfait (Prix fixe)</option>
+                    <option value="Régie">Régie (Temps passé)</option>
+                    <option value="Maintenance">Maintenance (TMA)</option>
+                    <option value="Interne">Projet Interne</option>
+                </select>
+            </div>
+
             <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-            <h3>Configuration du Contrat</h3>
+            <h3>Configuration financière</h3>
 
             <div class="grid-2">
                 <div class="form-group">
@@ -78,13 +103,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="form-group">
                     <label for="rate">Taux horaire (€/h)</label>
-                    <input type="number" id="rate" name="rate" placeholder="Ex: 80">
+                    <input type="number" id="rate" name="rate" placeholder="Ex: 80" step="0.01">
                 </div>
             </div>
 
             <div style="margin-top: 20px;">
                 <button type="submit">Créer le projet</button>
-                <a href="projects.php" style="margin-left: 20px; color: #666; text-decoration: none;">Annuler</a>
+                <a href="projects.php" class="btn" style="background-color: #95a5a6; margin-left: 10px;">Annuler</a>
             </div>
         </form>
     </main>

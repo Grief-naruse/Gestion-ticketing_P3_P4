@@ -1,55 +1,58 @@
 <?php
 // includes/data.php
+// Ce fichier sert maintenant à récupérer les VRAIES données depuis la BDD
 
-// 1. Les Projets (Nouveau !)
-$projects = [
-    [
-        'id' => 1,
-        'name' => 'Refonte Site E-commerce',
-        'client' => 'Boutique Mode SA',
-        'type' => 'Maintenance (50h / an)',
-        'hours_total' => 50,
-        'hours_used' => 12,
-        'team' => 'Ilan Rubaud, Sophie Martin'
-    ],
-    [
-        'id' => 2,
-        'name' => 'CRM Intranet',
-        'client' => 'Assurance Plus',
-        'type' => 'TMA Illimité',
-        'hours_total' => 200, // Mis arbitrairement pour la barre de progression
-        'hours_used' => 145,
-        'team' => 'Ilan Rubaud'
-    ]
-];
+// 1. On se connecte à la base
+require_once 'db.php';
 
-// 2. Les Tickets
-$tickets = [
-    [
-        'id' => 104,
-        'title' => 'Erreur 500 au paiement',
-        'project_id' => 1, // Lié à l'ID du projet
-        'project' => 'Refonte Site E-commerce',
-        'author' => 'Jean Dupont',
-        'status' => 'status-progress', 
-        'status_label' => 'En cours',
-        'type' => 'type-included',
-        'type_label' => 'Inclus',
-        'priority' => 'Haute',
-        'created_at' => '2026-02-01 09:00:00'
-    ],
-    [
-        'id' => 105,
-        'title' => 'Dév nouvelle feature PDF',
-        'project_id' => 2,
-        'project' => 'CRM Intranet',
-        'author' => 'Ilan Rubaud',
-        'status' => 'status-new', 
-        'status_label' => 'À valider',
-        'type' => 'type-billable',
-        'type_label' => 'Facturable',
-        'priority' => 'Moyenne',
-        'created_at' => '2026-02-02 14:30:00'
-    ]
-];
+try {
+    // --- RÉCUPÉRATION DES PROJETS AVEC SOMME DES HEURES ---
+$sqlProjects = "SELECT p.*, 
+                (SELECT SUM(te.duration) 
+                FROM time_entries te 
+                JOIN tickets t ON te.ticket_id = t.id 
+                WHERE t.project_id = p.id) as real_hours_used
+                FROM projects p";
+
+$stmtProjects = $pdo->query($sqlProjects);
+$projects = $stmtProjects->fetchAll(PDO::FETCH_ASSOC);
+    // --- RÉCUPÉRATION DES TICKETS ---
+    // On veut aussi le nom du projet associé, donc on fait une JOINTURE (LEFT JOIN)
+    // Ça veut dire : "Prends les tickets ET va chercher le nom du projet correspondant dans l'autre table"
+    $sqlTickets = "SELECT tickets.*, projects.name as project 
+                   FROM tickets 
+                   LEFT JOIN projects ON tickets.project_id = projects.id 
+                   ORDER BY tickets.created_at DESC";
+    
+    $stmtTickets = $pdo->query($sqlTickets);
+    $tickets = $stmtTickets->fetchAll(PDO::FETCH_ASSOC);
+
+    // --- PETITE MOULINETTE D'AFFICHAGE ---
+    // Pour garder ton affichage joli (les badges de couleurs), on ajoute les labels
+    // car la BDD ne stocke que 'new', 'progress'... pas le texte 'En cours'.
+    
+  foreach ($tickets as &$ticket) {
+    // Labels complets pour les statuts selon le Fil Rouge
+    switch($ticket['status']) {
+        case 'new':         $ticket['status_label'] = 'Nouveau'; break;
+        case 'progress':    $ticket['status_label'] = 'En cours'; break;
+        case 'waiting':     $ticket['status_label'] = 'En attente client'; break;
+        case 'done':        $ticket['status_label'] = 'Terminé'; break;
+        case 'to_validate': $ticket['status_label'] = 'À valider (client)'; break;
+        case 'validated':   $ticket['status_label'] = 'Validé'; break;
+        case 'refused':     $ticket['status_label'] = 'Refusé'; break;
+        default:            $ticket['status_label'] = $ticket['status'];
+    }
+    // Classe CSS dynamique
+    $ticket['status_class'] = 'status-' . $ticket['status']; 
+
+    // Labels pour les types
+    $ticket['type_label'] = ($ticket['type'] === 'included') ? 'Inclus' : 'Facturable';
+    $ticket['type_class'] = ($ticket['type'] === 'included') ? 'type-included' : 'type-billable';
+}
+unset($ticket);
+
+} catch (PDOException $e) {
+    die("Erreur de récupération des données : " . $e->getMessage());
+}
 ?>
