@@ -6,12 +6,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paramètres</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <aside class="sidebar">
         <h2>Ticketing App</h2>
@@ -24,9 +26,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </ul>
         </nav>
         <div class="user-info">
-             <p style="margin-bottom: 5px; font-size: 0.8rem; opacity: 0.7;">Connecté en tant que :</p>
-             <a href="profile.php" style="color: white; font-weight: bold; text-decoration: none;">Ilan Rubaud</a>
-             <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+            <p style="margin-bottom: 5px; font-size: 0.8rem; opacity: 0.7;">Connecté en tant que :</p>
+            <a href="profile.php" style="color: white; font-weight: bold; text-decoration: none;">Ilan Rubaud</a>
+            <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
                 <a href="index.php" style="color: #bdc3c7; font-size: 0.8rem; text-decoration: none;">➜ Déconnexion</a>
             </div>
         </div>
@@ -37,13 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h1>Paramètres de l'application</h1>
         </header>
 
-        <?php if($message) echo $message; ?>
+        <?php if ($message)
+            echo $message; ?>
 
         <form action="" method="POST" id="settingsForm">
             <section class="card">
                 <h3>🔔 Notifications</h3>
                 <div style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee;">
                         <div><strong>Nouveau ticket assigné</strong></div>
                         <input type="checkbox" name="notif_new" checked>
                     </div>
@@ -58,14 +62,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h3>🎨 Préférences</h3>
                 <div class="form-group">
                     <label>Langue</label>
-                    <select name="lang"><option>Français</option><option>English</option></select>
+                    <select name="lang">
+                        <option>Français</option>
+                        <option>English</option>
+                    </select>
                 </div>
-                
+
                 <button type="submit" class="btn">Enregistrer tout</button>
             </section>
         </form>
     </main>
-    
+
     <script src="js/app.js"></script>
 </body>
+
 </html>

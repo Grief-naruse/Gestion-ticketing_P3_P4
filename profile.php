@@ -10,12 +10,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Profil</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <aside class="sidebar">
         <h2>Ticketing App</h2>
@@ -28,9 +30,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </ul>
         </nav>
         <div class="user-info">
-             <p style="margin-bottom: 5px; font-size: 0.8rem; opacity: 0.7;">Connecté en tant que :</p>
-             <a href="profile.php" style="color: white; font-weight: bold; text-decoration: none;">Ilan Rubaud</a>
-             <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+            <p style="margin-bottom: 5px; font-size: 0.8rem; opacity: 0.7;">Connecté en tant que :</p>
+            <a href="profile.php" style="color: white; font-weight: bold; text-decoration: none;">Ilan Rubaud</a>
+            <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
                 <a href="index.php" style="color: #bdc3c7; font-size: 0.8rem; text-decoration: none;">➜ Déconnexion</a>
             </div>
         </div>
@@ -40,14 +42,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <header>
             <h1>Mon Profil</h1>
         </header>
-        
-        <?php if($message) echo $message; ?>
+
+        <?php if ($message)
+            echo $message; ?>
 
         <div class="grid-2">
             <div class="card">
                 <h3>Mes informations</h3>
                 <div style="text-align: center; margin: 20px 0;">
-                    <div style="width: 80px; height: 80px; background: #2c3e50; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">IR</div>
+                    <div
+                        style="width: 80px; height: 80px; background: #2c3e50; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                        IR</div>
                 </div>
                 <form id="profileForm">
                     <div class="form-group">
@@ -63,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="card">
                 <h3>Sécurité</h3>
-                
+
                 <form action="" method="POST" id="passwordForm">
                     <div class="form-group">
                         <label>Ancien mot de passe</label>
@@ -84,4 +89,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </main>
     <script src="js/app.js"></script>
 </body>
+
 </html>

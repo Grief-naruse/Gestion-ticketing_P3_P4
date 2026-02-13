@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription - Ticketing App</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="login-page">
     <div class="card" style="width: 100%; max-width: 450px;">
         <h2 style="text-align: center; margin-bottom: 20px;">Créer un compte</h2>
-        
+
         <form id="registerForm">
             <div class="form-group">
                 <label for="fullname">Nom complet</label>
                 <input type="text" id="fullname" name="fullname" placeholder="Ex: Ilan Rubaud" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="email">Email professionnel</label>
                 <input type="email" id="email" name="email" placeholder="nom@entreprise.com" required>
@@ -44,9 +46,11 @@
         </form>
 
         <div style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-            Déjà un compte ? <a href="index.html" style="color: var(--accent-color); text-decoration: none;">Se connecter</a>
+            Déjà un compte ? <a href="index.html" style="color: var(--accent-color); text-decoration: none;">Se
+                connecter</a>
         </div>
     </div>
     <script src="js/app.js"></script>
 </body>
+
 </html>

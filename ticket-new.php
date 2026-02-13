@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             $sql = "INSERT INTO tickets (project_id, title, description, priority, type, status, created_at) 
                     VALUES (:pid, :title, :desc, :prio, :type, 'new', NOW())";
-            
+
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':pid' => $project_id,
@@ -46,12 +46,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nouveau Ticket</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <aside class="sidebar">
         <h2>Ticketing App</h2>
@@ -70,14 +72,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h1>Nouveau Ticket</h1>
         </header>
 
-        <?php if($message) echo $message; ?>
+        <?php if ($message)
+            echo $message; ?>
 
         <form action="" method="POST" id="ticketForm" class="card">
             <div class="form-group">
                 <label for="project">Projet concerné *</label>
                 <select id="project" name="project_id" required>
                     <option value="">-- Choisir un projet --</option>
-                    <?php foreach($projectsList as $p): ?>
+                    <?php foreach ($projectsList as $p): ?>
                         <option value="<?php echo $p['id']; ?>">
                             <?php echo htmlspecialchars($p['name']); ?>
                         </option>
@@ -124,4 +127,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </main>
     <script src="js/app.js"></script>
 </body>
+
 </html>

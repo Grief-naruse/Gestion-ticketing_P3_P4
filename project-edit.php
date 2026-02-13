@@ -2,7 +2,7 @@
 require 'includes/db.php'; //
 
 $message = "";
-$id = (int)$_GET['id'];
+$id = (int) $_GET['id'];
 
 // 1. Récupérer les données actuelles pour remplir le formulaire
 try {
@@ -10,7 +10,8 @@ try {
     $stmt->execute([':id' => $id]);
     $project = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$project) die("Projet introuvable.");
+    if (!$project)
+        die("Projet introuvable.");
 } catch (PDOException $e) {
     die("Erreur : " . $e->getMessage());
 }
@@ -21,19 +22,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $client = htmlspecialchars($_POST['client']);
     $description = htmlspecialchars($_POST['description']);
     $type = $_POST['type'];
-    $hours = (int)$_POST['hours'];
-    $rate = (float)$_POST['rate'];
+    $hours = (int) $_POST['hours'];
+    $rate = (float) $_POST['rate'];
 
     try {
         $sql = "UPDATE projects SET 
                 name = :name, client_name = :client, description = :descr, 
                 type = :type, hours_total = :hours, rate = :rate 
                 WHERE id = :id";
-        
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            ':name' => $name, ':client' => $client, ':descr' => $description,
-            ':type' => $type, ':hours' => $hours, ':rate' => $rate, ':id' => $id
+            ':name' => $name,
+            ':client' => $client,
+            ':descr' => $description,
+            ':type' => $type,
+            ':hours' => $hours,
+            ':rate' => $rate,
+            ':id' => $id
         ]);
 
         header("Location: project-detail.php?id=$id&success=updated");
@@ -45,10 +51,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <title>Modifier le Projet</title>
-    <link rel="stylesheet" href="css/style.css"> </head>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
 <body>
     <main class="content" style="margin-left: 0; width: 100%; max-width: 800px; margin: 0 auto;">
         <header>
@@ -61,7 +70,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form action="" method="POST" class="card">
             <div class="form-group">
                 <label>Nom du Client</label>
-                <input type="text" name="client" value="<?php echo htmlspecialchars($project['client_name']); ?>" required>
+                <input type="text" name="client" value="<?php echo htmlspecialchars($project['client_name']); ?>"
+                    required>
             </div>
             <div class="form-group">
                 <label>Nom du projet</label>
@@ -69,14 +79,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="form-group">
                 <label>Description</label>
-                <textarea name="description" rows="3"><?php echo htmlspecialchars($project['description']); ?></textarea>
+                <textarea name="description"
+                    rows="3"><?php echo htmlspecialchars($project['description']); ?></textarea>
             </div>
             <div class="form-group">
                 <label>Type de contrat</label>
                 <select name="type">
-                    <option value="Forfait" <?php if($project['type'] == 'Forfait') echo 'selected'; ?>>Forfait</option>
-                    <option value="Régie" <?php if($project['type'] == 'Régie') echo 'selected'; ?>>Régie</option>
-                    <option value="Maintenance" <?php if($project['type'] == 'Maintenance') echo 'selected'; ?>>Maintenance</option>
+                    <option value="Forfait" <?php if ($project['type'] == 'Forfait')
+                        echo 'selected'; ?>>Forfait</option>
+                    <option value="Régie" <?php if ($project['type'] == 'Régie')
+                        echo 'selected'; ?>>Régie</option>
+                    <option value="Maintenance" <?php if ($project['type'] == 'Maintenance')
+                        echo 'selected'; ?>>
+                        Maintenance</option>
                 </select>
             </div>
             <div class="grid-2">
@@ -93,4 +108,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </main>
 </body>
+
 </html>

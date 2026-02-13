@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // REQUÊTE SQL QUI INCLUT LE TYPE
             $sql = "INSERT INTO projects (name, client_name, description, type, hours_total, rate, hours_used) 
                     VALUES (:name, :client, :descr, :type, :hours, :rate, 0)";
-            
+
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':name' => $name,
@@ -41,12 +41,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nouveau Projet</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <aside class="sidebar">
         <h2>Ticketing App</h2>
@@ -65,7 +67,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h1>Nouveau Projet</h1>
         </header>
 
-        <?php if($message) echo $message; ?>
+        <?php if ($message)
+            echo $message; ?>
 
         <form action="" method="POST" id="projectForm" class="card">
             <div class="form-group">
@@ -115,4 +118,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </main>
     <script src="js/app.js"></script>
 </body>
+
 </html>

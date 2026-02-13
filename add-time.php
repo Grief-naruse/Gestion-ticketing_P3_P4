@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ':date' => $work_date,
                 ':com' => $comment
             ]);
-            
+
             // On redirige vers le ticket avec un message de succès
             header("Location: ticket-detail.php?id=" . $ticket_id . "&success=1");
             exit();
