@@ -79,6 +79,9 @@ try {
         <div class="user-info">
             <p style="margin-bottom: 5px; font-size: 0.8rem; opacity: 0.7;">Connecté en tant que :</p>
             <a href="profile.php" style="color: white; font-weight: bold; text-decoration: none;">Ilan Rubaud</a>
+            <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                <a href="index.php" style="color: #bdc3c7; font-size: 0.8rem; text-decoration: none;">➜ Déconnexion</a>
+            </div>
         </div>
     </aside>
 
@@ -89,13 +92,13 @@ try {
             <div class="alert alert-success" style="margin-top:15px;">✅ Temps enregistré avec succès !</div>
         <?php endif; ?>
 
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
-            <h1>#<?php echo $ticket['id']; ?> - <?php echo htmlspecialchars($ticket['title']); ?></h1>
-            <div>
-                <span class="badge <?php echo ($ticket['type'] === 'included') ? 'type-included' : 'type-billable'; ?>">
-                    <?php echo ($ticket['type'] === 'included') ? 'Inclus' : 'Facturable'; ?>
-                </span>
-                <span class="badge <?php echo $statusClass; ?>"><?php echo $currentStatusLabel; ?></span>
+        <header style="display: flex; justify-content: space-between; align-items: center;">
+            <h1><?php echo strtoupper($ticket['title']); ?></h1>
+            <div style="display: flex; gap: 10px;">
+                <a href="ticket-edit.php?id=<?php echo $ticket['id']; ?>" class="btn"
+                    style="background-color: #3498db;">Modifier le ticket</a>
+
+                <a href="tickets.php" class="btn" style="background-color: #95a5a6;">Retour</a>
             </div>
         </header>
 
